@@ -2019,10 +2019,10 @@ subroutine set_tmax_dtmax()
     period2 = sqrt(4.*pi**2*binary2_a**3/m2)
  elseif (icentral==1 .and. nsinks==2 .and. ibinary==1) then
     !--time of flyby
-    if (flyby_e == 1.) then
-      period = get_T_flyby_par(m1,m2,flyby_q,flyby_d/flyby_q)
-    else
+    if (flyby_e > 1.) then
       period = get_T_flyby_hyp(m1,m2,flyby_e,flyby_f,flyby_a)
+    else
+      period = get_T_flyby_par(m1,m2,flyby_q,flyby_d/flyby_q)
     endif
  elseif (nplanets > 0) then
     !--outer planet orbital period
@@ -3700,13 +3700,14 @@ real function get_cs_from_lum(L_star,r)
  get_cs_from_lum = get_cs_from_lum/unit_velocity
 end function get_cs_from_lum
 
-subroutine get_flyby_elements(flyby_q, flyby_e, flyby_d)
-real :: flyby_q, flyby_e, flyby_d
+subroutine get_flyby_elements(flyby_q,flyby_e,flyby_d,flyby_a,flyby_f)
+real :: flyby_q,flyby_e,flyby_d
+real :: flyby_a,flyby_f
 
 if (flyby_e > 1.) then
    flyby_a = -flyby_q / (1.-flyby_e) !--semimajor axis positive
    flyby_f = -abs(acos((flyby_a * (flyby_e*flyby_e-1.))/(flyby_e * flyby_d) - (1. / flyby_e)) * 180./pi)
-elseif (flyby_e == 1.0) then
+else
    flyby_a = flyby_q 
    flyby_f = -abs(acos(((2.*flyby_q/flyby_d)-1.0)/flyby_e)) * 180.0 / pi
 endif
